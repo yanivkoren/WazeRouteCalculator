@@ -21,6 +21,7 @@
         <option value="custom">Custom...</option>
       </select>
       <input type="text" id="customFromInput" name="from_address" style="display:none;" class="form-control mb-3" />
+      <input type="hidden" id="from_address_name" name="from_address_name" />
 
       <label>To:</label><br />
       <div class="form-check">
@@ -42,6 +43,8 @@
       <label class="mt-3">Custom To Address:</label>
       <input type="text" name="to_address_custom" class="form-control mb-3" />
 
+      <input type="hidden" id="to_address_labels" name="to_address_labels" value="" />
+
       <input type="submit" value="Calculate Route" class="btn btn-primary" />
     </form>
 
@@ -60,6 +63,30 @@
       function handleSubmit() {
         var fromSelect = document.getElementById('fromSelect')
         var customInput = document.getElementById('customFromInput')
+        var fromAddressName = document.getElementById('from_address_name')
+        var allCheckboxes = document.querySelectorAll('input[name="to_address_choices"]')
+        var selectedLabels = []
+      
+        // set fromAddressName value
+        if (fromSelect.value === 'custom') {
+          fromAddressName.value = customInput.value // Use the custom address as the name
+        } else {
+          fromAddressName.value = fromSelect.options[fromSelect.selectedIndex].text // Use the text of the selected option as the name
+        }
+        // set fromAddressName
+        allCheckboxes.forEach(function (checkbox) {
+          if (checkbox.checked) {
+            var label = document.querySelector(`label[for=${checkbox.id}]`).textContent
+            selectedLabels.push(label)
+          }
+        })
+        // Check if to_address_custom has a value and append it
+        var customToAddress = document.querySelector('input[name="to_address_custom"]').value.trim()
+        if (customToAddress) {
+          selectedLabels.push(customToAddress)
+        }
+      
+        document.getElementById('to_address_labels').value = selectedLabels.join('##')
       
         if (fromSelect.value === 'home') {
           customInput.value = 'hacarmel 18 ganei tikva'
